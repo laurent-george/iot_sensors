@@ -43,74 +43,75 @@
   <div id="graph" class="aGraph" style="position:absolute;top:20pxleft:400; float:left"></div>
 </body>
 <script>
-                    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-                    var margin = {top: 30, right: 20, bottom: 70, left: 50},
-                    width = 600 - margin.left - margin.right,
-                    height = 270 - margin.top - margin.bottom;
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+var margin = {top: 30, right: 20, bottom: 70, left: 50},
+    width = 600 - margin.left - margin.right,
+    height = 270 - margin.top - margin.bottom;
 
 
-                    //Create the Scale we will use for the Axis
-                    var axisScale = d3.scale.linear()
-                                             .domain([0, 500])
-                                             .range([0, width]);
+//Create the Scale we will use for the Axis
+	var axisScale = d3.scale.linear()
+.domain([0, 500])
+	.range([0, width]);
 
 
-                    var yaxisScale = d3.scale.linear()
-                    .domain([0, 5])
-                    .range([ height,0]);
+	var yaxisScale = d3.scale.linear()
+.domain([0, 5])
+	.range([ height,0]);
 
-                    var xAxis = d3.svg.axis()
-                    .scale(axisScale)
-                    .orient("bottom");
+	var xAxis = d3.svg.axis()
+.scale(axisScale)
+	.orient("bottom");
 
-                    var yAxis = d3.svg.axis()
-                    .scale(yaxisScale)
-                    .orient("left");
+	var yAxis = d3.svg.axis()
+.scale(yaxisScale)
+	.orient("left");
 
-                    var svgContainer = d3.select("body").
-                    append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	var svgContainer = d3.select("body").
+	append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                    svgContainer.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+	svgContainer.append("g")
+	.attr("class", "x axis")
+	.attr("transform", "translate(0," + height + ")")
+	.call(xAxis);
 
-                    svgContainer.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
+	svgContainer.append("g")
+	.attr("class", "y axis")
+	.call(yAxis);
 
-                    // create a line
-                    var line = d3.svg.line()
-                    .x(function(d,i) {
-                      console.log(d.x);
-                      return axisScale(d.x);
-                    })
-                    .y(function(d,i) {
-                      console.log(d.y);
-                      return yaxisScale(d.y);
-                    })
-                    var my_data = "";
+	// create a line
+var line = d3.svg.line()
+	.x(function(d,i) {
+			console.log(d.x);
+			return axisScale(d.x);
+			})
+.y(function(d,i) {
+		console.log(d.y);
+		return yaxisScale(d.y);
+		})
+var my_data = "";
+
+setInterval(function(){
+
+$.getJSON(                            //Get some values from the server
+		$SCRIPT_ROOT + '/streamdata',      // At this URL
+		{},                                // With no extra parameters
+		function(data)                     // And when you get a response
+		{
+		console.log('Samy data is' + data)
+		my_data = data;  // Write the results into the
+		// #result element
+
+		console.log("Test" + my_data)
+		svgContainer.append("svg:path").attr("class", "line").attr("d", line(my_data));
 
 
-
-                     $.getJSON(                            //Get some values from the server
-                        $SCRIPT_ROOT + '/streamdata',      // At this URL
-                        {},                                // With no extra parameters
-                        function(data)                     // And when you get a response
-                        {
-                        console.log('Samy data is' + data)
-                          my_data = data;  // Write the results into the
-                                                           // #result element
-
-                    console.log("Test" + my_data)
-                    svgContainer.append("svg:path").attr("class", "line").attr("d", line(my_data));
-
-
-                        });
+		});
+		}, 1000);
 
 
 
