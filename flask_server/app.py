@@ -3,7 +3,7 @@ from flask import Flask, render_template, Response, make_response, jsonify
 import numpy as np
 
 import json
-import pandas
+#import pandas
 import numpy as np
 
 app = Flask(__name__)
@@ -23,7 +23,10 @@ def hello_world():
 @app.route('/sensor/<sensor_name>')
 def get_sensor(sensor_name):
     key = sensor_name
-    return str(sensors[key])
+    if key in sensors :
+        return str(sensors[key])
+    else :
+        return "Sensor not found"
 
 
 @app.route('/sensor/<sensor_name>/mean')
@@ -32,12 +35,16 @@ def get_sensor_mean(sensor_name):
     mean = np.mean(sensors[key])
     return str(mean)
 
-@app.route('/streamdata')
-def event_stream():
+@app.route('/streamdata/<sensor_name>')
+def event_stream(sensor_name):
     # ici get new data from database
     last_y = d[-1]['y']
     last_x = d[-1]['x']
-    d.append({"x":last_x+10, "y":np.random.randint(5)})
+    if sensor_name == 'humidity':
+        d.append({"x":last_x+10, "y":np.random.randint(100)})
+    else:
+        d.append({"x":last_x+10, "y":np.random.randint(5)})
+
     print("Stream data %s" % d)
     #return make_response(data=json.dumps(d))
     return make_response(json.dumps(d))
@@ -47,9 +54,9 @@ def event_stream():
     #print(res.__dict__)
     #return res
 
-@app.route('/stream')
-def show_basic():
-    return render_template("visualization_live.html")
+@app.route('/stream/<sensor_name>')
+def show_basic(sensor_name):
+    return render_template("visualization_live.html", sensor_name=sensor_name)
 
 
 if __name__ == '__main__':

@@ -40,6 +40,8 @@
   </style>
 </head>
 <body>
+  <h1>Hello {{ sensor_name }}!</h1>
+
   <div id="graph" class="aGraph" style="position:absolute;top:20pxleft:400; float:left"></div>
 </body>
 <script>
@@ -98,7 +100,7 @@ var my_data = "";
 setInterval(function(){
 
 $.getJSON(                            //Get some values from the server
-		$SCRIPT_ROOT + '/streamdata',      // At this URL
+		$SCRIPT_ROOT + '/streamdata/' + '{{ sensor_name }}',      // At this URL
 		{},                                // With no extra parameters
 		function(data)                     // And when you get a response
 	{
