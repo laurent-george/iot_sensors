@@ -13,6 +13,18 @@ import datetime
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
+engine = sqlalchemy.create_engine("mysql://%s/%s" % (server_ip, server_db))
+metadata = sqlalchemy.MetaData(bind=engine)
+
+class Tests(Base):
+    __table__ = sqlalchemy.Table('fake_sensor', metadata, autoload=True)
+
+dbsession = sqlalchemy.orm.sessionmaker(bind=engine)
+session = dbsession()
+ session.query(Tests)[0].value  # to be continued.
+session.query(Tests)[-1].value  # to be continued.
+
+
 class SensorDatabaseModel(Base):
     name = os.path.basename(sys.modules[__name__].__file__)
     name = os.path.splitext(name)[0]
@@ -27,15 +39,15 @@ class SensorDatabaseModel(Base):
     # TODO: add also an automatic timestamp from mysql db
 
 class DummySensor(object):
-    def __init__(self):
+    def __init__(self, server_ip):
         self.database_name = "HOME_SENSORS"
         self.name_sensor = "TEMPERATURE"
         self.seq_number = 0
         self.value = 0
+        self.server_ip = server_ip
 
         # creation of database if neccessary
-
-        self.engine = sqlalchemy.create_engine("mysql://root@127.0.0.1/%s" % self.database_name)#("mysql://root:root@127.0.0.1/%s" % self.database_name)
+        self.engine = sqlalchemy.create_engine("mysql://%s/%s" % (self.server_ip ,self.database_name)) #("mysql://root:root@127.0.0.1/%s" % self.database_name)
         self.model_db = SensorDatabaseModel
         Base.metadata.create_all(self.engine) # tODO: peut etre a mettre dans le main
         Base.metadata.bind = self.engine
@@ -62,7 +74,7 @@ class DummySensor(object):
 
 def main():
     try:
-        sensor = DummySensor()
+        sensor = DummySensor('10.0.160.255')
         wait_time = 2.0  # 2 seconds
         while True:
             sensor.publish_data()

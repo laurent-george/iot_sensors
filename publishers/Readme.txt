@@ -25,4 +25,6 @@ sudo /etc/init.d/mysql restart
 bon ca n'est pas suffisant il faut autoriser la connection distante à regarder plus tard. TODO
 
 
-
+# autorisation des privilege pour une ip
+dans /etc/mysql/my.cnf commenter la ligne bind-address
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'10.0.164.118' IDENTIFIED BY 'PASSWORD' WITH GRANT OPTION;
