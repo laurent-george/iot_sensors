@@ -28,3 +28,10 @@ bon ca n'est pas suffisant il faut autoriser la connection distante à regarder 
 # autorisation des privilege pour une ip
 dans /etc/mysql/my.cnf commenter la ligne bind-address
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'10.0.164.118' IDENTIFIED BY 'PASSWORD' WITH GRANT OPTION;
+
+#Erreur Python :
+"File "C:\Python27\lib\site-packages\MySQLdb\connections.py", line 204, in __init__
+    super(Connection, self).__init__(*args, **kwargs2)
+sqlalchemy.exc.OperationalError: (_mysql_exceptions.OperationalError) (1044, "Access denied for user ''@'localhost' to database 'home_sensors'")"
+
+--> Il faut changer les privilèges de connexion à la BDD de localhost.
